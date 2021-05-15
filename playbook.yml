@@ -1,0 +1,106 @@
+---
+- hosts: all
+  tasks:
+    - name: Ping all nodes
+      ping:
+    - name: Install mosquitto
+      become: true
+      apt:
+        name: mosquitto
+        state: present
+
+- hosts: broker_mqtt
+  become: true
+  tasks:
+    - name: Copy conf
+      copy:
+        src: broker.conf
+        dest: /etc/mosquitto/mosquitto.conf
+    - name: Start broker
+      service:
+        name: mosquitto
+        state: started
+
+- hosts: TIG_stack
+  become: true
+  tasks:
+    - name: Install Docker Module for Python
+      apt:
+        name: python3-docker
+        state: present
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        update_cache: yes
+        name: docker-ce
+        state: present
+
+    - name: Pull InfluxDB image
+      docker_image:
+        name: influxdb
+        source: pull
+
+    - name: Pull Telegraf image
+      docker_image:
+        name: telegraf
+        source: pull
+
+    - name: Pull Grafana image
+      docker_image:
+        name: grafana
+        source: pull
+    
+    - name: Create a network
+      docker_network:
+        name: tig
+
+    - name: Create influxdb container
+      docker_container:
+        name: influxdb
+        image: influxdb
+        state: started
+        networks:
+          - name: tig
+        published_ports: 8086:8086
+        env:
+          DOCKER_INFLUXDB_INIT_MODE: setup
+          DOCKER_INFLUXDB_INIT_USERNAME: "user"
+          DOCKER_INFLUXDB_INIT_PASSWORD: "pass"
+          DOCKER_INFLUXDB_INIT_ORG: "default"
+          DOCKER_INFLUXDB_INIT_BUCKET: "iot"
+          DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ""
+
+    - name: Copy telegraf conf
+      copy:
+        src: telegraf.conf
+        dest: /home/vagrant/telegraf.conf
+
+    - name: Create telegraf container
+      docker_container:
+        name: telegraf
+        image: telegraf
+        state: started
+        networks:
+          - name: tig
+        volumes: 
+          - /home/vagrant/telegraf.conf:/etc/telegraf/telegraf.conf
+
+    - name: Create grafana container
+      docker_container:
+        name: grafana
+        image: grafana
+        state: started
+        networks:
+          - name: tig
+        published_ports: 3000:3000
+        

@@ -1,0 +1,7 @@
+[broker_mqtt]
+node1 ansible_ssh_host=192.168.1.161 ansible_user=vagrant ansible_ssh_private_key_file=./.vagrant/machines/node1/virtualbox/private_key
+
+[TIG_stack]
+node2 ansible_ssh_host=192.168.1.162 ansible_user=vagrant ansible_ssh_private_key_file=./.vagrant/machines/node2/virtualbox/private_key
+node3 ansible_ssh_host=192.168.1.163 ansible_user=vagrant ansible_ssh_private_key_file=./.vagrant/machines/node3/virtualbox/private_key
+node4 ansible_ssh_host=192.168.1.164 ansible_user=vagrant ansible_ssh_private_key_file=./.vagrant/machines/node4/virtualbox/private_key

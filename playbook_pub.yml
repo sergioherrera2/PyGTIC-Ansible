@@ -1,0 +1,16 @@
+---
+- hosts: pub_mqtt
+  tasks:
+    - name: Install python-paho-mqtt
+      become: true
+      apt:
+        name: python3-paho-mqtt
+        state: present
+    - name: send msg
+      mqtt:
+        topic: 'esi/room1/temp'
+        payload: '{"node":"node1","temp":19}'
+        qos: 0
+        retain: False
+        port: 2883
+        server: 192.168.18.35
