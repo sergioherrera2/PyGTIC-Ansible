@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "centos/7"
+  config.vm.box = "ubuntu/trusty64"
 
   
   config.vm.define "node1" do |node1|
@@ -46,10 +46,10 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "node4" do |node4|
-    node3.vm.network "forwarded_port", guest: 80, host: 8083, host_ip: "127.0.0.1"
-    node3.vm.hostname = "Grafana"
-    node3.vm.network "public_network", bridge: "wlp2s0"
-    node3.vm.provider "virtualbox" do |vb|
+    node4.vm.network "forwarded_port", guest: 80, host: 8083, host_ip: "127.0.0.1"
+    node4.vm.hostname = "Grafana"
+    node4.vm.network "public_network", bridge: "wlp2s0"
+    node4.vm.provider "virtualbox" do |vb|
      vb.memory = "512"
      vb.cpus = "1"
     end

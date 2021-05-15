@@ -3,6 +3,11 @@
   tasks:
     - name: Ping all nodes
       ping:
+    - name: Install Python
+      become: true
+      apt:
+        name: python-apt
+        state: present
     - name: Install mosquitto
       become: true
       apt:

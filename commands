@@ -1,0 +1,2 @@
+# Ejecutar playbooks
+ansible-playbook -i hosts playbook.yml
